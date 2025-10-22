@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masterclass in Routing Logic (ฉบับสมบูรณ์)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #212529;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: #ffffff;
+            padding: 25px 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border: 1px solid #dee2e6;
+        }
+        h1, h2, h3 {
+            color: #004a99;
+            border-bottom: 3px solid #0056b3;
+            padding-bottom: 12px;
+            margin-top: 45px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.8em;
+            border-bottom: none;
+            color: #003366;
+        }
+        h2 {
+            font-size: 2.2em;
+        }
+        h3 {
+            font-size: 1.7em;
+            border-bottom: 2px solid #e9ecef;
+        }
+        code {
+            background-color: #e9ecef;
+            padding: 3px 7px;
+            border-radius: 5px;
+            font-family: Consolas, 'Courier New', monospace;
+            font-size: 0.95em;
+            color: #c7254e;
+        }
+        pre {
+            background-color: #212529;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: Consolas, 'Courier New', monospace;
+            font-size: 1em;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border: 1px solid #495057;
+        }
+        .note {
+            background-color: #e6f7ff;
+            border-left: 6px solid #1890ff;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .warning {
+            background-color: #fffbe6;
+            border-left: 6px solid #faad14;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .note strong, .warning strong {
+            color: #004a99;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 1.2em;
+        }
+        .warning strong {
+           color: #d46b08;
+        }
+        .image-container {
+            text-align: center;
+            margin: 35px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+        }
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .image-caption {
+            font-style: italic;
+            color: #555;
+            margin-top: 12px;
+            font-size: 0.95em;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+        }
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px;
+            text-align: left;
+        }
+        th {
+            background-color: #004a99;
+            color: white;
+            font-size: 1.1em;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        hr {
+            border: 0;
+            height: 2px;
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 74, 153, 0.75), rgba(0, 0, 0, 0));
+            margin: 60px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎓 Masterclass in Routing Logic (ฉบับสมบูรณ์)</h1>
+        <p style="text-align:center; font-size: 1.2em; color: #555;">เอกสารประกอบการสอนสำหรับ Network Engineer: Routing Table & Static Routes</p>
+        
+        <hr>
+
+        <h2>บทที่ 1: 🧠 สมองของ Network - การทำงานของ Routing Table เชิงลึก</h2>
+        <p>
+            Router ไม่ได้เป็นเพียงอุปกรณ์ที่ Forward ข้อมูล แต่มันคือ <strong>"Decision-Making Device"</strong> และสมองที่ใช้ในการตัดสินใจก็คือ <strong>Routing Table</strong> หากเปรียบ Packet เป็น "จดหมาย" และ Router เป็น "ไปรษณีย์กลาง" Routing Table ก็คือ "สมุดรายชื่อและแผนที่ประเทศ" ที่พนักงานไปรษณีย์ใช้เพื่อตัดสินใจว่าจะต้องส่งจดหมายฉบับนี้ต่อไปยังไปรษณีย์เขตใด
+        </p>
+        <div class="image-container">
+            <img src="https://i.imgur.com/gKjYtKq.png" alt="Abstract image of a digital brain with data pathways">
+            <p class="image-caption">Routing Table ทำหน้าที่เสมือนสมองกลของ Network ที่ใช้ในการตัดสินใจเลือกเส้นทาง</p>
+        </div>
+
+        <h3>Anatomy of a Route (องค์ประกอบของ Route)</h3>
+        <p>
+            แต่ละบรรทัดใน Routing Table ไม่ใช่แค่ข้อมูล แต่คือ "กฎ" หนึ่งข้อที่บอกเล่าเรื่องราวทั้งหมดของการเดินทาง มาดูความหมายที่แท้จริงของแต่ละส่วนจากผลลัพธ์ของคำสั่ง <code>show ip route</code>
+        </p>
+        <div class="image-container">
+            <img src="https://i.imgur.com/xO9qK8B.png" alt="A Cisco 'show ip route' CLI output with callouts explaining each part.">
+            <p class="image-caption">ตัวอย่าง Routing Table พร้อมคำอธิบายองค์ประกอบโดยละเอียด</p>
+        </div>
+        
+        <table>
+            <tr>
+                <th>องค์ประกอบ</th>
+                <th>คำอธิบายเชิงลึก</th>
+            </tr>
+            <tr>
+                <td><strong>Route Source (<code>S, C, O</code>)</strong></td>
+                <td>บอกว่า Router เรียนรู้ Route นี้มาได้อย่างไร <code>C</code> คือ Connected Network (น่าเชื่อถือที่สุด), <code>S</code> คือ Static Route ที่ Engineer กำหนดเอง, <code>O</code> คือ Route ที่เรียนรู้จาก Protocol OSPF</td>
+            </tr>
+            <tr>
+                <td><strong>Prefix (<code>192.168.10.0/24</code>)</strong></td>
+                <td>คือ "ที่อยู่" และ "ขนาด" ของ Destination Network เลขหลัง "/" (Prefix Length) คือกุญแจสำคัญที่สุดในกฎ Longest Prefix Match</td>
+            </tr>
+            <tr>
+                <td><strong>Administrative Distance (<code>[1/0]</code>)</strong></td>
+                <td>เลขตัวแรกคือ <strong>AD</strong> หรือ "ระดับความน่าเชื่อถือ" ของ Route Source (ค่ายิ่งน้อย ยิ่งน่าเชื่อถือ) Router จะใช้ค่านี้เปรียบเทียบเมื่อมี Route ไปยัง Prefix เดียวกันจากหลาย Source</td>
+            </tr>
+            <tr>
+                <td><strong>Metric (<code>[1/0]</code>)</strong></td>
+                <td>เลขตัวหลังคือ <strong>Metric</strong> หรือ "ค่า Cost" ในการเดินทาง จะถูกนำมาพิจารณาเมื่อมีหลาย Route ที่มี Prefix และ AD เท่ากัน Route ที่มี Metric ต่ำที่สุดจะถูกเลือก</td>
+            </tr>
+            <tr>
+                <td><strong>Next-Hop (<code>via 10.1.1.2</code>)</strong></td>
+                <td>คือ IP Address ของ "Router เพื่อนบ้าน" ตัวถัดไปที่จะต้องส่ง Packet นี้ต่อให้ ไม่ใช่ Final Destination</td>
+            </tr>
+            <tr>
+                <td><strong>Outgoing Interface (<code>Serial0/0</code>)</strong></td>
+                <td>คือ Physical Port ของ Router ตัวเอง ที่จะใช้ส่ง Packet ออกไปเพื่อไปยัง Next-Hop</td>
+            </tr>
+        </table>
+
+        <hr>
+
+        <h2>บทที่ 2: ⚖️ Decision-Making Process ของ Router ฉบับสมบูรณ์</h2>
+        <p>
+            เมื่อ Router ได้รับ Packet มันจะทำตามกระบวนการที่เข้มงวดเพื่อหา Route ที่ <strong>"ดีที่สุด"</strong> เพียงหนึ่งเดียว (หรือหลาย Route ถ้าดีเท่ากัน) นี่คือลำดับการตัดสินใจทั้งหมด:
+        </p>
+        <div class="image-container">
+            <img src="https://i.imgur.com/C9n4u6y.png" alt="A flowchart illustrating the router's 3-step decision-making process for selecting a route: Longest Prefix, AD, Metric.">
+            <p class="image-caption">ผังกระบวนการตัดสินใจเลือกเส้นทางของเราเตอร์ (The 3-Step Process)</p>
+        </div>
+        
+        <h3>ขั้นตอนที่ 1: The Longest Prefix Match (เลือก Route ที่ Specific ที่สุด)</h3>
+        <div class="note">
+            <strong>หลักการ:</strong> กฎข้อนี้สำคัญที่สุดและจะถูกพิจารณาเป็นอันดับแรกเสมอ Router จะเลือก Route ที่มี Subnet Mask ยาวที่สุด (เจาะจงที่สุด) สำหรับ Destination IP นั้น โดยไม่สนใจค่า AD หรือ Metric ใดๆ ทั้งสิ้น
+        </div>
+
+        <h3>ขั้นตอนที่ 2: The Lowest Administrative Distance (เลือก Route ที่น่าเชื่อถือที่สุด)</h3>
+        <div class="note">
+            <strong>หลักการ:</strong> ขั้นตอนนี้จะถูกใช้ก็ต่อเมื่อมีหลาย Route ที่มี <strong>Prefix Length เท่ากันพอดี</strong> Router จะเลือก Route จาก Source ที่น่าเชื่อถือที่สุด (ค่า AD ต่ำที่สุด)
+        </div>
+
+        <h3>ขั้นตอนที่ 3: The Lowest Metric (เลือก Route ที่ Cost ต่ำที่สุด)</h3>
+        <div class="note">
+            <strong>หลักการ:</strong> คือไม้ตายสุดท้าย จะถูกใช้ก็ต่อเมื่อ <strong>Prefix Length และ AD เท่ากัน</strong> Router จะเลือก Route ที่มี "Cost" ต่ำที่สุด (Metric ต่ำสุด)
+        </div>
+
+        <h3>ขั้นตอนที่ 4: Equal-Cost Multi-Path (ถ้าทุกอย่างเท่ากัน ให้ทำ Load Balancing)</h3>
+        <div class="note">
+             <strong>หลักการ:</strong> หาก Router ทำตาม 3 ขั้นตอนแรกแล้วยังพบว่ามี Route ที่ดีที่สุดเหลืออยู่มากกว่า 1 เส้นทาง (คือมี Prefix, AD, และ Metric เท่ากันทั้งหมด) มันจะไม่เลือกทิ้ง Route ใด แต่จะเก็บไว้ทั้งหมดและทำ <strong>Load Balancing</strong> เพื่อกระจาย Traffic ออกไปในทุกๆ Route นั้น
+        </div>
+
+        <h3>และถ้าหากไม่พบ Route เลย? (Default Route & Drop 🚫)</h3>
+        <div class="warning">
+            <strong>หลักการ:</strong> หาก Router ค้นหา Destination IP ในตารางแล้ว <strong>ไม่พบ Route ที่ตรงกันเลยแม้แต่เส้นเดียว</strong> มันจะทำตามนี้:
+            <ol>
+                <li><strong>มองหา Default Route (<code>0.0.0.0/0</code>):</strong> Router จะตรวจสอบว่ามีการตั้งค่า "Gateway of Last Resort" ไว้หรือไม่ ถ้ามี มันจะส่ง Packet ไปตาม Route นั้น</li>
+                <li><strong>Drop Packet:</strong> หากไม่มีแม้กระทั่ง Default Route เราเตอร์จะสรุปว่า "ไม่รู้จะส่งไปที่ไหน" และทำการ <strong>ทิ้ง Packet (Drop)</strong> ทันที และอาจส่งข้อความ ICMP "Destination Unreachable" กลับไปยัง Source</li>
+            </ol>
+        </div>
+
+
+        <hr>
+
+        <h2>บทที่ 3: ✍️ การ Config - Static Route และ Floating Static Route</h2>
+        <p>
+            <strong>Static Route</strong> คือการที่เรา (Engineer) บังคับ Router ให้เรียนรู้เส้นทางแบบตายตัว เปรียบเสมือนการ "Hard Code" ลงบนแผนที่ว่าถ้าจะไปที่นี่ ต้องไปทางนี้เท่านั้น
+        </p>
+        <p><strong>Syntax (Cisco IOS):</strong> <code>ip route &lt;destination-network&gt; &lt;subnet-mask&gt; &lt;next-hop-ip | outgoing-interface&gt;</code></p>
+        
+        <h3>Floating Static Route</h3>
+        <p>
+            นี่คือเทคนิคการทำ Static Route สำรอง (Backup) โดยการกำหนดค่า AD ให้ <strong>สูงกว่า</strong> Primary Route ที่เราต้องการ ในสภาวะปกติ Router จะเลือกใช้ Primary Route แต่เมื่อไหร่ก็ตามที่ Primary Route หายไปจาก Routing Table (เช่น Link หลักล่ม) Floating Static Route นี้จะปรากฏขึ้นมาทำงานแทนทันที
+        </p>
+        <pre><code>
+! Primary Route อาจเรียนรู้มาจาก OSPF (AD=110)
+! เราสร้าง Backup Route โดยกำหนด AD ให้สูงกว่า เช่น 130
+
+R1(config)# ip route 192.168.1.0 255.255.255.0 10.1.1.2 130
+        </code></pre>
+
+        <hr>
+
+        <h2>บทที่ 4: 🚪 ประตูสู่โลกภายนอก - Default Route (Gateway of Last Resort)</h2>
+        <p>
+            <strong>Default Route (<code>0.0.0.0/0</code>)</strong> คือ Static Route ประเภทที่ Specific น้อยที่สุด มันคือ Route "สำหรับทุกสิ่งที่ไม่รู้จัก" ทำหน้าที่เป็นทางออกสุดท้าย (Gateway of Last Resort) หาก Router หา Route ที่เจาะจงกว่าในตารางไม่เจอ มันจะใช้ Route นี้
+        </p>
+        <pre><code>
+! ส่งทุก Traffic ที่ไม่รู้จักไปยัง ISP ที่ IP 203.0.113.1
+Edge_Router(config)# ip route 0.0.0.0 0.0.0.0 203.0.113.1
+        </code></pre>
+
+        <hr>
+
+        <h2>บทที่ 5: 🔬 ภาคปฏิบัติ (LAB) - การเชื่อมต่อและวิเคราะห์ Packet Flow</h2>
+        <h3>LAB Topology</h3>
+        <div class="image-container">
+            <img src="https://i.imgur.com/uN6eQ1L.png" alt="A clear network topology diagram for a 3-router lab, showing BKK, Hatyai, and Chiangmai routers with IP addresses.">
+            <p class="image-caption">Network Topology สำหรับ LAB: การเชื่อมต่อ 3 สาขา</p>
+        </div>
+
+        <h3>ขั้นตอน LAB</h3>
+        <h4>Step 1: ตั้งค่าพื้นฐาน (IP Address & No Shutdown)</h4>
+        <p>ทำการตั้งค่าพื้นฐานบน Router ทุกตัวให้พร้อมใช้งาน คำสั่งจะแสดงการตั้งค่าสำหรับ <strong>R1 (BKK)</strong> เป็นตัวอย่าง</p>
+        <pre><code>R1> enable
+R1# configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+R1(config)# hostname BKK
+BKK(config)# interface Loopback0
+BKK(config-if)# description >> LAN for BKK Branch <<
+BKK(config-if)# ip address 1.1.1.1 255.255.255.0
+BKK(config-if)# exit
+BKK(config)# interface Serial0/0/0
+BKK(config-if)# description >> Link to Hatyai Router <<
+BKK(config-if)# ip address 10.1.1.1 255.255.255.252
+BKK(config-if)# clock rate 64000
+BKK(config-if)# no shutdown
+BKK(config-if)# end
+BKK# write memory
+Building configuration...
+[OK]
+</code></pre>
+        <p class="note"><strong>คำแนะนำ:</strong> ให้นักเรียนทำการตั้งค่าบน R2 (Hatyai) และ R3 (Chiangmai) ให้ครบถ้วนตาม Topology</p>
+
+        <h4>Step 2: การตรวจสอบสถานะและ Routing Table เริ่มต้น</h4>
+        <p>หลังจากตั้งค่า IP เสร็จสิ้น ให้ใช้คำสั่ง <code>show ip interface brief</code> เพื่อตรวจสอบสถานะของ Interface</p>
+        <div class="image-container">
+            <img src="https://i.imgur.com/YI7hV81.png" alt="Screenshot of the 'show ip interface brief' command output on a Cisco router, showing interfaces as up/up.">
+            <p class="image-caption">ผลลัพธ์จาก R1: ตรวจสอบว่า Interface ทุกตัวมีสถานะ "up" และ "up"</p>
+        </div>
+        <p>จากนั้น ตรวจสอบ Routing Table เริ่มต้นของ <strong>R1</strong> ด้วยคำสั่ง <code>show ip route</code></p>
+        <div class="image-container">
+            <img src="https://i.imgur.com/K5bT7Wn.png" alt="Screenshot of R1's initial routing table showing only connected (C) and local (L) routes.">
+            <p class="image-caption">Routing Table ของ R1 ก่อนการ Config Static Route จะเห็นแค่ Connected & Local Routes (C, L)</p>
+        </div>
+        <div class="note"><strong>วิเคราะห์:</strong> จะเห็นว่า R1 รู้จักแค่ Network ที่ติดกับตัวเอง (<code>1.1.1.0/24</code> และ <code>10.1.1.0/30</code>) เท่านั้น มันจึงยังไม่สามารถส่งข้อมูลไปยัง Network <code>3.3.3.0/24</code> ได้</div>
+
+        <h4>Step 3: กำหนด Static Route (ไปและกลับ)</h4>
+        <p>ที่ <strong>R1 (BKK)</strong>, เราต้องสร้าง Route ไปยัง Destination Network ของ R3</p>
+        <pre><code>
+BKK# configure terminal
+BKK(config)# ip route 3.3.3.0 255.255.255.0 10.1.1.2
+BKK(config)# ip route 10.2.2.0 255.255.255.252 10.1.1.2
+BKK(config)# end
+        </code></pre>
+        <p>ที่ <strong>R3 (Chiangmai)</strong>, เราต้องสร้าง "Return Route" กลับมายัง Network ของ R1 ซึ่งสำคัญมาก!</p>
+        <pre><code>
+Chiangmai# configure terminal
+Chiangmai(config)# ip route 1.1.1.0 255.255.255.0 10.2.2.1
+Chiangmai(config)# ip route 10.1.1.0 255.255.255.252 10.2.2.1
+Chiangmai(config)# end
+        </code></pre>
+        <p>ตรวจสอบ Routing Table ของ <strong>R1</strong> อีกครั้ง จะเห็น Route ใหม่ที่ขึ้นต้นด้วย 'S'</p>
+        <div class="image-container">
+            <img src="https://i.imgur.com/o7b8B1h.png" alt="Screenshot of R1's routing table after adding static routes, highlighting the new 'S' static routes.">
+            <p class="image-caption">Routing Table ของ R1 หลังเพิ่ม Static Route (สังเกต 'S' Route ที่เพิ่มเข้ามา)</p>
+        </div>
+
+        <h4>Step 4: การวิเคราะห์ Packet Flow และการ Ping</h4>
+        <div class="note">
+            <strong>หัวใจสำคัญ:</strong> การทดสอบ Ping จาก Router มี 2 แบบ ซึ่งให้ผลลัพธ์และมีความหมายในการ Troubleshooting แตกต่างกันอย่างสิ้นเชิง
+        </div>
+
+        <h5>A) ทดสอบ Ping แบบไม่ระบุ Source: <code>ping 3.3.3.3</code></h5>
+        <p>เมื่อไม่ระบุ Source, Router จะใช้ IP ของ Egress Interface (Interface ขาออกที่ใกล้ Destination ที่สุด) เป็น Source IP โดยอัตโนมัติ</p>
+        <div class="image-container">
+            <img src="https://i.imgur.com/WJ9mJ3c.png" alt="A packet flow diagram for a ping with an unspecified source IP, showing source/destination IPs at each step.">
+            <p class="image-caption">Packet Flow เมื่อ Ping โดยไม่ระบุ Source</p>
+        </div>
+        <ul>
+            <li><strong>Packet ขาไป (Echo Request):</strong> Source IP: <code>10.1.1.1</code> (IP ของ S0/0/0), Destination IP: <code>3.3.3.3</code></li>
+            <li><strong>Packet ขากลับ (Echo Reply):</strong> Source IP: <code>3.3.3.3</code>, Destination IP: <code>10.1.1.1</code></li>
+        </ul>
+        <p>ผลการทดสอบ:</p>
+        <pre><code>
+BKK# ping 3.3.3.3
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 3.3.3.3, timeout is 2 seconds:
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 1/2/4 ms
+        </code></pre>
+
+        <h5>B) ทดสอบ Ping แบบระบุ Source: <code>ping 3.3.3.3 source loopback 0</code></h5>
+        <p>เป็นการจำลอง Traffic ที่มาจาก LAN Network จริงๆ ซึ่งเป็นวิธีทดสอบ End-to-End Connectivity ที่ถูกต้อง</p>
+        <div class="image-container">
+            <img src="https://i.imgur.com/z1q13Kk.png" alt="A packet flow diagram for a ping with a specified source IP from a loopback interface, showing different source/destination IPs.">
+            <p class="image-caption">Packet Flow เมื่อ Ping โดยระบุ Source Interface</p>
+        </div>
+        <ul>
+            <li><strong>Packet ขาไป (Echo Request):</strong> Source IP ถูกบังคับให้เป็น <code>1.1.1.1</code>, Destination IP: <code>3.3.3.3</code></li>
+            <li><strong>Packet ขากลับ (Echo Reply):</strong> Source IP: <code>3.3.3.3</code>, Destination IP: <code>1.1.1.1</code></li>
+        </ul>
+        <p>ผลการทดสอบ:</p>
+        <pre><code>
+BKK# ping 3.3.3.3 source loopback 0
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 3.3.3.3, timeout is 2 seconds:
+Packet sent with a source address of 1.1.1.1 
+!!!!!
+Success rate is 100 percent (5/5), round-trip min/avg/max = 1/2/4 ms
+        </code></pre>
+        <div class="note">
+            <strong>บทสรุปการทดสอบ:</strong> การ Ping โดยระบุ Source Interface (<code>source loopback 0</code>) เป็นวิธีการทดสอบที่ <strong>ถูกต้องและแม่นยำที่สุด</strong> ในการ Verify Connectivity ระหว่าง LAN สองฝั่ง เพราะมันบังคับให้ Destination Router (R3) ต้องหา "Return Route" กลับมายัง Source LAN (<code>1.1.1.0/24</code>) จริงๆ ซึ่งเป็นการยืนยันว่าการ Config Routing ทั้งขาไปและกลับนั้นสมบูรณ์
+        </div>
+
+        <hr>
+
+        <h2>บทที่ 6: ❓ คำถามทบทวนสำหรับ Engineer</h2>
+        <ol>
+            <li><strong>คำถามเชิงสถานการณ์:</strong> Router ของคุณเรียนรู้ Route ไปยัง <code>172.16.0.0/16</code> จาก OSPF (AD=110, Metric=50) และเรียนรู้ Route ไปยัง <code>172.16.10.0/24</code> ผ่าน Static Route (AD=1, Metric=0). หากมี Packet ที่มี Destination IP เป็น <code>172.16.10.20</code> เข้ามา, Router จะเลือกใช้ Route ใด? จงอธิบายตาม Decision-Making Process</li>
+            <li><strong>คำถาม Troubleshooting:</strong> คุณอยู่ที่ R1 และ <code>ping 3.3.3.3 source loopback 0</code> ไม่สำเร็จ (Timeout) แต่ <code>show ip route</code> ที่ R1 แสดง Route ไป <code>3.3.3.0/24</code> อย่างถูกต้อง คุณควรจะไปตรวจสอบอะไรเป็นอันดับแรกที่ Router ตัวใด และต้องตรวจสอบอะไร?</li>
+            <li><strong>คำถามออกแบบระบบ:</strong> ใน Topology ของ Lab, หากสาขา Chiangmai มีการเพิ่ม LAN Network ใหม่ขึ้นมาอีก 5 Networks, คุณจะต้องทำอะไรที่ R1 เพื่อให้ BKK สามารถคุยกับ Network ใหม่เหล่านั้นได้? และมีวิธีใดที่จะทำให้การ Config ที่ R1 ง่ายขึ้นหรือไม่ในอนาคต?</li>
+            <li><strong>คำถามเชิงลึก:</strong> การกำหนด Static Route โดยใช้ Outgoing Interface (<code>ip route 1.1.1.0 255.255.255.0 Serial0/0</code>) แทนที่จะเป็น Next-Hop IP มีข้อควรระวังอย่างไร โดยเฉพาะเมื่อ Interface นั้นเป็นแบบ Multi-access เช่น Ethernet?</li>
+        </ol>
+
+    </div>
+</body>
+</html>
