@@ -35,13 +35,13 @@
         <h2>บทที่ 1: 🧠 สมองของ Network - การทำงานของ Routing Table เชิงลึก</h2>
         <p>Router ไม่ได้เป็นเพียงอุปกรณ์ที่ Forward ข้อมูล แต่มันคือ <strong>"Decision-Making Device"</strong> และสมองที่ใช้ในการตัดสินใจก็คือ <strong>Routing Table</strong> หากเปรียบ Packet เป็น "จดหมาย" และ Router เป็น "ไปรษณีย์กลาง" Routing Table ก็คือ "สมุดรายชื่อและแผนที่ประเทศ" ที่พนักงานไปรษณีย์ใช้เพื่อตัดสินใจว่าจะต้องส่งจดหมายฉบับนี้ต่อไปยังไปรษณีย์เขตใด</p>
         <div class="image-container">
-            <img src="images/brain.png" alt="Abstract image of a digital brain with data pathways">
+            <img src="brain.png" alt="Abstract image of a digital brain with data pathways">
             <p class="image-caption">Routing Table ทำหน้าที่เสมือนสมองกลของ Network ที่ใช้ในการตัดสินใจเลือกเส้นทาง</p>
         </div>
         <h3>Anatomy of a Route (องค์ประกอบของ Route)</h3>
         <p>แต่ละบรรทัดใน Routing Table ไม่ใช่แค่ข้อมูล แต่คือ "กฎ" หนึ่งข้อที่บอกเล่าเรื่องราวทั้งหมดของการเดินทาง มาดูความหมายที่แท้จริงของแต่ละส่วนจากผลลัพธ์ของคำสั่ง <code>show ip route</code></p>
         <div class="image-container">
-            <img src="images/anatomy-of-route.png" alt="A Cisco 'show ip route' CLI output with callouts explaining each part.">
+            <img src="anatomy-of-route.png" alt="A Cisco 'show ip route' CLI output with callouts explaining each part.">
             <p class="image-caption">ตัวอย่าง Routing Table พร้อมคำอธิบายองค์ประกอบโดยละเอียด</p>
         </div>
         <table>
@@ -57,7 +57,7 @@
         <h2>บทที่ 2: ⚖️ Decision-Making Process ของ Router ฉบับสมบูรณ์</h2>
         <p>เมื่อ Router ได้รับ Packet มันจะทำตามกระบวนการที่เข้มงวดเพื่อหา Route ที่ <strong>"ดีที่สุด"</strong> เพียงหนึ่งเดียว (หรือหลาย Route ถ้าดีเท่ากัน) นี่คือลำดับการตัดสินใจทั้งหมด:</p>
         <div class="image-container">
-            <img src="images/3-step-process.png" alt="A flowchart illustrating the router's 3-step decision-making process for selecting a route: Longest Prefix, AD, Metric.">
+            <img src="3-step-process.png" alt="A flowchart illustrating the router's 3-step decision-making process for selecting a route: Longest Prefix, AD, Metric.">
             <p class="image-caption">ผังกระบวนการตัดสินใจเลือกเส้นทางของเราเตอร์ (The 3-Step Process)</p>
         </div>
         <h3>ขั้นตอนที่ 1: The Longest Prefix Match (เลือก Route ที่ Specific ที่สุด)</h3>
@@ -88,7 +88,7 @@ Edge_Router(config)# ip route 0.0.0.0 0.0.0.0 203.0.113.1</code></pre>
         <h2>บทที่ 5: 🔬 ภาคปฏิบัติ (LAB) - การเชื่อมต่อและวิเคราะห์ Packet Flow</h2>
         <h3>LAB Topology</h3>
         <div class="image-container">
-            <img src="images/topology.png" alt="A clear network topology diagram for a 3-router lab">
+            <img src="topology.png" alt="A clear network topology diagram for a 3-router lab">
             <p class="image-caption">Network Topology สำหรับ LAB: การเชื่อมต่อ 3 สาขา</p>
         </div>
         <h3>ขั้นตอน LAB</h3>
@@ -115,12 +115,12 @@ Building configuration...
         <h4>Step 2: การตรวจสอบสถานะและ Routing Table เริ่มต้น</h4>
         <p>หลังจากตั้งค่า IP เสร็จสิ้น ให้ใช้คำสั่ง <code>show ip interface brief</code> เพื่อตรวจสอบสถานะของ Interface</p>
         <div class="image-container">
-            <img src="images/show-ip-interface-brief.png" alt="Screenshot of the 'show ip interface brief' command output">
+            <img src="show-ip-interface-brief.png" alt="Screenshot of the 'show ip interface brief' command output">
             <p class="image-caption">ผลลัพธ์จาก R1: ตรวจสอบว่า Interface ทุกตัวมีสถานะ "up" และ "up"</p>
         </div>
         <p>จากนั้น ตรวจสอบ Routing Table เริ่มต้นของ <strong>R1</strong> ด้วยคำสั่ง <code>show ip route</code></p>
         <div class="image-container">
-            <img src="images/show-ip-route-initial.png" alt="Screenshot of R1's initial routing table">
+            <img src="show-ip-route-initial.png" alt="Screenshot of R1's initial routing table">
             <p class="image-caption">Routing Table ของ R1 ก่อนการ Config Static Route จะเห็นแค่ Connected & Local Routes (C, L)</p>
         </div>
         <div class="note"><strong>วิเคราะห์:</strong> จะเห็นว่า R1 รู้จักแค่ Network ที่ติดกับตัวเอง (<code>1.1.1.0/24</code> และ <code>10.1.1.0/30</code>) เท่านั้น มันจึงยังไม่สามารถส่งข้อมูลไปยัง Network <code>3.3.3.0/24</code> ได้</div>
@@ -137,7 +137,7 @@ Chiangmai(config)# ip route 10.1.1.0 255.255.255.252 10.2.2.1
 Chiangmai(config)# end</code></pre>
         <p>ตรวจสอบ Routing Table ของ <strong>R1</strong> อีกครั้ง จะเห็น Route ใหม่ที่ขึ้นต้นด้วย 'S'</p>
         <div class="image-container">
-            <img src="images/show-ip-route-static.png" alt="Screenshot of R1's routing table after adding static routes">
+            <img src="show-ip-route-static.png" alt="Screenshot of R1's routing table after adding static routes">
             <p class="image-caption">Routing Table ของ R1 หลังเพิ่ม Static Route (สังเกต 'S' Route ที่เพิ่มเข้ามา)</p>
         </div>
         <h4>Step 4: การวิเคราะห์ Packet Flow และการ Ping</h4>
@@ -145,7 +145,7 @@ Chiangmai(config)# end</code></pre>
         <h5>A) ทดสอบ Ping แบบไม่ระบุ Source: <code>ping 3.3.3.3</code></h5>
         <p>เมื่อไม่ระบุ Source, Router จะใช้ IP ของ Egress Interface (Interface ขาออกที่ใกล้ Destination ที่สุด) เป็น Source IP โดยอัตโนมัติ</p>
         <div class="image-container">
-            <img src="images/packet-flow-no-source.png" alt="A packet flow diagram for a ping with an unspecified source IP">
+            <img src="packet-flow-no-source.png" alt="A packet flow diagram for a ping with an unspecified source IP">
             <p class="image-caption">Packet Flow เมื่อ Ping โดยไม่ระบุ Source</p>
         </div>
         <ul>
@@ -161,7 +161,7 @@ Success rate is 100 percent (5/5), round-trip min/avg/max = 1/2/4 ms</code></pre
         <h5>B) ทดสอบ Ping แบบระบุ Source: <code>ping 3.3.3.3 source loopback 0</code></h5>
         <p>เป็นการจำลอง Traffic ที่มาจาก LAN Network จริงๆ ซึ่งเป็นวิธีทดสอบ End-to-End Connectivity ที่ถูกต้อง</p>
         <div class="image-container">
-            <img src="images/packet-flow-with-source.png" alt="A packet flow diagram for a ping with a specified source IP">
+            <img src="packet-flow-with-source.png" alt="A packet flow diagram for a ping with a specified source IP">
             <p class="image-caption">Packet Flow เมื่อ Ping โดยระบุ Source Interface</p>
         </div>
         <ul>
